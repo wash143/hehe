@@ -1,0 +1,47 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from PIL import Image
+import nltk
+from nltk.corpus import stopwords
+from nltk import word_tokenize
+from nltk.probability import FreqDist
+from wordcloud import WordCloud
+
+nltk.download("stopwords")
+
+
+
+stopwordlt=stopwords.words("english")
+
+file=open("./dataset/Agatha.txt",'r').read()
+
+#Tokenisation
+words=word_tokenize(file)
+
+len(words)
+
+#Punctuation removal
+word_no_punc=[]
+for word in words:
+    if(word.isalpha()):
+        word_no_punc.append(word.lower())
+len(word_no_punc)
+
+#Stopwords Removal
+clean_words=[]
+for word in word_no_punc:
+    if word not in stopwordlt:
+        clean_words.append(word)
+        
+len(clean_words)
+
+word_string=" ".join(clean_words)
+
+
+wcloud=WordCloud(background_color="white").generate(word_string)
+plt.axis("off")
+plt.imshow(wcloud)
+
+
