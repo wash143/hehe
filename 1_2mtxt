@@ -1,0 +1,64 @@
+import pandas as pd
+df=pd.read_csv('C:/Users/dipay/OneDrive/Desktop/Automobile_data.csv')
+dimensions=df.shape
+structure=df.info()
+summary=df.describe(include='all')
+
+dimensions,structure,summary
+
+
+
+import matplotlib.pyplot as plt
+plt.figure(figsize=(14,6))
+
+plt.subplot(1,2,1)
+df['horsepower'].hist(bins=30,edgecolor='black')
+plt.title('Histogram of HorsePower')
+plt.xlabel('Horsepower')
+plt.ylabel('Frequency')
+
+plt.subplot(1,2,2)
+df['price'].hist(bins=30,edgecolor='blue')
+plt.title('Histogram of price')
+plt.xlabel('Price')
+plt.ylabel('Frequency')
+
+plt.tight_layout()
+plt.show()
+
+import seaborn as sns
+plt.figure(figsize=(10,6))
+sns.violinplot(x=df['price'])
+plt.title('Violin Plot of price')
+plt.xlabel('Price')
+plt.show()
+
+plt.figure(figsize=(10,6))
+sns.boxplot(x=df['price'])
+plt.title('Box plot (Price before outlier treatment)')
+plt.xlabel('Price')
+plt.show()
+
+Q1=df['price'].quantile(0.25)
+Q3=df['price'].quantile(0.75)
+IQR=Q3-Q1
+
+lower_bound=Q1-1.5*IQR
+upper_bound=Q3+1.5*IQR
+
+df['price']=df['price'].clip(lower_bound,upper_bound)
+
+plt.figure(figsize=(10,6))
+sns.boxplot(x=df['price'])
+plt.title('Box plot of price(After Outlier Treatment)')
+plt.xlabel('Price')
+plt.show()
+
+
+from sklearn.preprocessing import StandardScaler
+
+continous_vars=df.select_dtypes(include=['float64','int64']).columns
+
+scaler=StandardScaler()
+df[continous_vars]=scaler.fit_transform(df[continous_vars])
+df.head()
