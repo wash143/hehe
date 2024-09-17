@@ -1,0 +1,89 @@
+# performing linear algebra
+import numpy as np 
+# data processing
+import pandas as pd
+# visualisation
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv('/home/divya/Downloads/customer_churn.csv')
+
+df.info()
+df.describe()
+
+#dealing missing values
+df.isnull().sum()
+
+#Replacing missing values with mean
+df['Seconds of Use'] = df['Seconds of Use'].fillna(df['Seconds of Use'].mean())
+df['Frequency of SMS'] = df['Frequency of SMS'].fillna(df['Frequency of SMS'].mean())
+
+#verify missing values
+df.isnull().sum()
+
+#defining X and y variable
+X = np.array(df.iloc[0:, 1:])
+X
+
+
+y = np.array(df['Churn'])
+
+X.shape
+y.shape
+
+# using training and test set 
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size = 0.20, random_state = 42)
+    
+    
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors = 6)
+knn.fit(X_train, y_train)
+knn.score(X_test, y_test)
+
+
+
+#Prediction on training data
+y_train_predict=knn.predict(X_train)
+#confusion matrix
+import seaborn as sns 
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import precision_score, recall_score, f1_score
+classnames=['0','1']
+confusionmatrix=confusion_matrix(y_train,y_train_predict)
+sns.heatmap(confusionmatrix,annot=True,yticklabels=classnames,xticklabels=classnames,fmt='g',cmap="Greens");
+
+
+
+
+
+from sklearn import metrics
+print ("Accuracy:",metrics.accuracy_score(y_train,y_train_predict))
+print('Precision Score: %.3f' % precision_score(y_train,y_train_predict))
+print('Recall Score: %.3f' % recall_score(y_train,y_train_predict))
+print('F1 Score: %.3f' % f1_score(y_train,y_train_predict))
+
+
+#Prediction on test data
+y_train_predict=knn.predict(X_test)
+#confusion matrix
+import seaborn as sns 
+from sklearn.metrics import confusion_matrix
+classnames=['0','1']
+confusionmatrix=confusion_matrix(y_test,y_train_predict)
+sns.heatmap(confusionmatrix,annot=True,yticklabels=classnames,xticklabels=classnames,fmt='g',cmap="Greens");
+
+
+from sklearn import metrics
+print ("Accuracy:",metrics.accuracy_score(y_test,y_train_predict))
+print('Precision Score: %.3f' % precision_score(y_test,y_train_predict))
+print('Recall Score: %.3f' % recall_score(y_test,y_train_predict))
+print('F1 Score: %.3f' % f1_score(y_test,y_train_predict))
+
+# predict for a new data 
+result = knn.predict([[0,38,0,4370.0,71,5.0,17,3,1,1,30,197.64,1]])
+if result == 1:
+        print ("1")
+else:
+        print ("0")
