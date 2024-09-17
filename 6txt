@@ -1,0 +1,22 @@
+import pandas as pd
+from mlxtend.frequent_patterns import apriori, association_rules
+
+df = pd.read_csv("groceries - groceries.csv")
+
+df.isnull().sum()
+df.fillna('')
+
+df_new = pd.DataFrame(df)
+df_new = df_new.drop(['Item(s)'],axis=1)
+
+df_dum = pd.get_dummies(df_new)
+
+frequent_items = apriori(df_dum,min_support=0.01,use_colnames=True)
+frequent_items
+
+rules = association_rules(frequent_items,metric='confidence',min_threshold=0.01)
+rules
+
+rules = rules.sort_values(['support', 'confidence'], ascending=[False, False])
+
+rules
